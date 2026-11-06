@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate="page-title">Presentación La Porcada Island</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* --- PALETA NEGRO Y DORADO --- */
+            --gold: #D4AF37;
+            --black: #0A0A0A;
+            --card-bg: #1a1a1a;
+            --slate: #A0A0A0;
+            --white: #FFFFFF;
+            --light-bg: #0A0A0A;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            background-color: var(--light-bg);
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* Navegación principal */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--black);
+            z-index: 1001;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--gold);
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .mode-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* Contenedor principal */
+        .presentation-container {
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .presentation-mode { display: none; }
+        .presentation-mode.active { display: block; }
+
+        /* MODO DE HISTORIA VISUAL */
+        .story-mode { background-color: var(--black); }
+
+        .story-container {
+            width: 100%;
+            height: calc(100vh - 60px);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .story-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .story-slide.active { opacity: 1; }
+        .story-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .story-slide video { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+        .logo-container img { max-width: 300px; max-height: 150px; object-fit: contain; }
+
+        #background-slide {
+            background-image: url('images/foto1.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .overlay-text {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), #FFF);
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .loading {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        /* MODO DE PRESENTACIÓN EJECUTIVA */
+        .business-mode { background-color: var(--light-bg); }
+
+        .slide-nav {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: var(--black);
+            color: white;
+            border: 1px solid var(--gold);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+        }
+
+        section {
+            min-height: calc(100vh - 60px);
+            padding: 60px 40px;
+            display: none;
+            box-sizing: border-box;
+        }
+
+        section.active {
+            display: block;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Dashboard */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .exec-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-left: 5px solid var(--gold);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+            color: var(--white);
+        }
+
+        .metric-card h4 {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--slate);
+            text-transform: uppercase;
+        }
+
+        .metric-card p {
+            margin: 10px 0 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        /* Hero conceptual */
+        .concept-hero {
+            position: relative;
+            width: 100%;
+            height: 45vh;
+            min-height: 320px;
+            margin-bottom: 50px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .concept-hero-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .concept-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(10,10,10,0.95));
+            padding: 80px 40px 30px;
+            box-sizing: border-box;
+        }
+
+        .concept-tagline {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+            letter-spacing: 1px;
+        }
+
+        .concept-subtagline {
+            font-size: 1rem;
+            color: var(--white);
+            opacity: 0.85;
+            margin-top: 10px;
+            max-width: 700px;
+            line-height: 1.5;
+        }
+
+        /* Descripción del concepto */
+        .concept-description {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            border-left: 5px solid var(--gold);
+            margin-bottom: 50px;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .concept-description p { margin: 0; }
+
+        /* Materiales */
+        .materials-section-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .material-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border-top: 4px solid var(--gold);
+            transition: transform 0.3s;
+        }
+
+        .material-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .material-card .spec-tag {
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .material-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--white);
+        }
+
+        .spec-tag {
+            display: inline-block;
+            background: #2a2a2a;
+            color: var(--gold);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: var(--black);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--gold);
+        }
+
+        .architect-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .price-text {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin: 10px 0;
+        }
+
+        .logo-highlight {
+            margin-top: 30px;
+            max-width: 200px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        /* Product hero */
+        .product-hero {
+            height: 40vh;
+            background: linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.7)),
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .product-hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin: 0;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .villa-model-container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            margin-top: 40px;
+            align-items: start;
+        }
+
+        .villa-image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 66.67%;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .villa-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .specs-list {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            color: var(--white);
+        }
+
+        .specs-list h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .specs-list ul {
+            padding-left: 20px;
+        }
+
+        .specs-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .specs-list p {
+            margin-bottom: 12px;
+            line-height: 1.55;
+        }
+
+        .image-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--slate);
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 900px) {
+            .exec-summary { grid-template-columns: repeat(2, 1fr); }
+            .materials-grid { grid-template-columns: 1fr; }
+            .villa-model-container { grid-template-columns: 1fr; }
+            .product-hero h1 { font-size: 2rem; }
+            .concept-tagline { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación principal -->
+    <div class="main-nav">
+        <button class="mode-btn active" onclick="switchMode('story')" data-translate="story-mode-btn">Modo Historia Visual</button>
+        <button class="mode-btn" onclick="switchMode('business')" data-translate="business-mode-btn">Modo Presentación Ejecutiva</button>
+        <button id="lang-toggle" class="mode-btn" onclick="toggleLanguage()">EN</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- MODO DE HISTORIA VISUAL -->
+        <div id="story-mode" class="presentation-mode story-mode active">
+            <div class="story-container">
+                <div class="progress-bar" id="progress-bar"></div>
+                <div class="loading" id="loading" data-translate="loading">Cargando...</div>
+                <div id="background-slide" class="story-slide active">
+                    <div class="overlay-text" data-translate="overlay-text-initial">La Isla Virgen</div>
+                </div>
+                <div id="carousel-slide" class="story-slide">
+                    <img id="carousel-image" src="" alt="Imagen del carrusel">
+                </div>
+                <div id="video-slide" class="story-slide">
+                    <video id="story-video" muted>
+                        <source src="video/newvillaporcada.mp4" type="video/mp4">
+                        <span data-translate="video-not-supported">Tu navegador no soporta el elemento de video.</span>
+                    </video>
+                </div>
+                <div id="post-video-slide" class="story-slide">
+                    <img id="post-video-image" src="" alt="Imagen posterior al video">
+                </div>
+                <div id="logos-slide" class="story-slide">
+                    <div class="logo-container">
+                        <img src="images/logo.png" alt="Logo">
+                        <img src="images/ecoresort.png" alt="Eco Resort">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODO DE PRESENTACIÓN EJECUTIVA -->
+        <div id="business-mode" class="presentation-mode business-mode">
+            <div class="slide-nav">
+                <button class="nav-btn" onclick="toggleSlide()" data-translate="change-view-btn">Ver Modelo de Villa →</button>
+            </div>
+
+            <!-- SLIDE 1: VISIÓN DEL PROYECTO (sin datos económicos de coste) -->
+            <section id="slide-finance" class="active">
+                <div class="dashboard">
+                    <h2 style="font-family: 'Cinzel', serif; color: var(--gold);" data-translate="business-case-title">I. Visión del Proyecto: La Porcada Island</h2>
+
+                    <!-- Hero conceptual con huellas en la orilla (foto100.png) -->
+                    <div class="concept-hero">
+                        <img src="images/foto100.png" alt="Huellas en la orilla del mar" class="concept-hero-img"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="image-error" style="display: none;">
+                            <p data-translate="image-unavailable">Imagen no disponible</p>
+                            <p style="font-size: 12px; margin-top: 10px;" data-translate="image-unavailable-details">Verifique que el archivo 'foto100.png' esté en la carpeta 'images'</p>
+                        </div>
+                        <div class="concept-overlay">
+                            <p class="concept-tagline" data-translate="concept-tagline">50 villas en la orilla del mar</p>
+                            <p class="concept-subtagline" data-translate="concept-subtagline">Un proyecto de lujo íntimo que se camufla con la naturaleza, donde cada huella deja una memoria sobre la arena.</p>
+                        </div>
+                    </div>
+
+                    <!-- Métricas clave del proyecto (sin datos de coste) -->
+                    <div class="exec-summary">
+                        <div class="metric-card"><h4 data-translate="metric-villas">VILLAS</h4><p>50</p></div>
+                        <div class="metric-card"><h4 data-translate="metric-plot">SUPERFICIE PARCELA</h4><p>1.000 m²</p></div>
+                        <div class="metric-card"><h4 data-translate="metric-build">CONSTRUCCIÓN</h4><p>500 m²</p></div>
+                        <div class="metric-card"><h4 data-translate="metric-levels">NIVELES</h4><p>2 Plantas</p></div>
+                    </div>
+
+                    <!-- Descripción narrativa del proyecto -->
+                    <div class="concept-description">
+                        <p data-translate="concept-description">La Porcada Island propone un desarrollo residencial de bajo impacto ambiental compuesto por 50 villas exclusivas situadas en primera línea de playa. Cada villa se levanta sobre una parcela de 1.000 m² con una construcción de 500 m² distribuidos en dos plantas, diseñadas para camuflarse con el entorno mediante cubiertas ajardinadas y placas solares integradas. Una piscina infinita limita cada parcela y conduce visualmente al inicio de la playa, difuminando el límite entre arquitectura y naturaleza.</p>
+                    </div>
+
+                    <!-- Materiales de construcción -->
+                    <h3 class="materials-section-title" data-translate="materials-section-title">Materiales de Construcción</h3>
+                    <div class="materials-grid">
+                        <div class="material-card">
+                            <span class="spec-tag" data-translate="material-clt-tag">CLT</span>
+                            <p data-translate="material-clt-desc">Madera contralaminada de alta ingeniería para la estructura principal. Sostenible, ligera y de rápida ejecución, permite un montaje limpio sobre el ecosistema costero sin comprometer la resistencia estructural.</p>
+                        </div>
+                        <div class="material-card">
+                            <span class="spec-tag" data-translate="material-steel-tag">ACERO GALVANIZADO</span>
+                            <p data-translate="material-steel-desc">Estructura secundaria y elementos de unión en acero galvanizado, con protección naval frente a la corrosión salina. Garantiza durabilidad y estabilidad frente a la intemperie marina.</p>
+                        </div>
+                        <div class="material-card">
+                            <span class="spec-tag" data-translate="material-epoxy-tag">EPOXY</span>
+                            <p data-translate="material-epoxy-desc">Revestimientos continuos de resina epoxy artística en plantas y zonas húmedas. Superficie impermeable, higiénica y personalizable, con acabados que evocan la orilla del mar.</p>
+                        </div>
+                    </div>
+
+                    <!-- Arquitectura firmada -->
+                    <div class="highlight-box">
+                        <p style="text-transform: uppercase; letter-spacing: 2px; margin: 0;" data-translate="architecture-label">Diseño Firmado por</p>
+                        <div class="architect-name">Taller de Arquitectura Denniston</div>
+                        <p style="color: var(--slate); margin: 0;" data-translate="architecture-desc">Concepto integral del resort y autoría del diseño arquitectónico</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: MODELO DE VILLA -->
+            <section id="slide-product">
+                <div class="product-hero">
+                    <h1 data-translate="product-hero-title">II. Modelo de Villa</h1>
+                </div>
+
+                <div class="dashboard">
+                    <div class="villa-model-container">
+                        <div>
+                            <div class="villa-image-container">
+                                <img src="images/villa0.png" alt="Villa La Porcada" class="villa-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="image-error" style="display: none;">
+                                    <p data-translate="image-unavailable-villa">Imagen no disponible</p>
+                                    <p style="font-size: 12px; margin-top: 10px;" data-translate="image-unavailable-villa-details">Verifique que el archivo 'villa0.png' esté en la carpeta 'images'</p>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="spec-item">
+                                    <span class="spec-tag" data-translate="spec-tag-structure">ESTRUCTURA</span>
+                                    <p><strong data-translate="spec-structure-strong">Sistema CLT + Acero Galvanizado:</strong> <span data-translate="spec-structure-desc">Estructura portante en madera contralaminada con refuerzos y uniones de acero galvanizado. Montaje limpio y rápido sobre el ecosistema costero.</span></p>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-tag" data-translate="spec-tag-cladding">REVESTIMIENTOS</span>
+                                    <p><strong data-translate="spec-cladding-strong">Epoxy Artístico:</strong> <span data-translate="spec-cladding-desc">Suelos continuos de resina epoxy con efecto "Orilla de Mar" en planta baja y acabados técnicos premium en planta superior.</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="specs-list">
+                            <h3 data-translate="model-details-title">Detalles del Modelo</h3>
+                            <p><strong data-translate="spec-surface-label">Superficie:</strong> <span data-translate="spec-surface-value">500 m² construidos sobre parcela de 1.000 m², en dos niveles.</span></p>
+                            <p><strong data-translate="spec-architecture-label">Arquitectura:</strong> <span data-translate="spec-architecture-value">Techos planos "vivos" con jardines en cubierta y placas solares integradas, diseñados para camuflar la vivienda en el entorno natural.</span></p>
+                            <p><strong data-translate="spec-pool-label">Piscina:</strong> <span data-translate="spec-pool-value">Piscina infinita que limita la parcela y conduce visualmente al inicio de la playa, fundiendo arquitectura y costa.</span></p>
+                            <p><strong data-translate="spec-layout-label">Distribución:</strong></p>
+                            <ul>
+                                <li data-translate="spec-layout-groundfloor">Planta Baja: Áreas sociales abiertas, cocina de diseño, acceso directo a la piscina infinita y a la playa.</li>
+                                <li data-translate="spec-layout-upperfloor">Planta Alta: Master Suite con vistas 270°, vestidor y baño de piedra natural, diseño Denniston.</li>
+                            </ul>
+                            <p><strong data-translate="spec-materials-label">Materiales:</strong> <span data-translate="spec-materials-value">CLT (estructura), acero galvanizado (refuerzos), epoxy (revestimientos).</span></p>
+                            <p><strong data-translate="spec-design-label">Diseño:</strong> <span data-translate="spec-design-value">Taller de Arquitectura Denniston.</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Solo precio de venta, sin rentabilidad ni modelo de condominio -->
+                    <div class="highlight-box">
+                        <p style="text-transform: uppercase; letter-spacing: 2px; margin: 0;" data-translate="market-valuation-label">Precio de Venta</p>
+                        <div class="price-text">25.000.000 USD</div>
+                        <p data-translate="price-note">Valor orientativo por unidad · Datos disponibles bajo solicitud cualificada</p>
+                        <img src="images/ecoresort.png" alt="Eco Resort" class="logo-highlight" onerror="this.style.display='none';">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // SISTEMA DE TRADUCCIÓN ES / EN
+        // =================================================================
+        let currentLang = 'es';
+
+        const translations = {
+            'page-title': { 'es': 'Presentación La Porcada Island', 'en': 'La Porcada Island Presentation' },
+            'story-mode-btn': { 'es': 'Modo Historia Visual', 'en': 'Visual Story Mode' },
+            'business-mode-btn': { 'es': 'Modo Presentación Ejecutiva', 'en': 'Executive Presentation Mode' },
+            'overlay-text-initial': { 'es': 'La Isla Virgen', 'en': 'The Virgin Island' },
+            'loading': { 'es': 'Cargando...', 'en': 'Loading...' },
+            'video-not-supported': { 'es': 'Tu navegador no soporta el elemento de video.', 'en': 'Your browser does not support the video element.' },
+            'change-view-btn': { 'es': 'Cambiar Vista Presentación', 'en': 'Change Presentation View' },
+            'business-case-title': { 'es': 'I. Visión del Proyecto: La Porcada Island', 'en': 'I. Project Vision: La Porcada Island' },
+            'concept-tagline': { 'es': '50 villas en la orilla del mar', 'en': '50 villas on the seashore' },
+            'concept-subtagline': {
+                'es': 'Un proyecto de lujo íntimo que se camufla con la naturaleza, donde cada huella deja una memoria sobre la arena.',
+                'en': 'An intimate luxury project that blends with nature, where every footprint leaves a memory on the sand.'
+            },
+            'metric-villas': { 'es': 'VILLAS', 'en': 'VILLAS' },
+            'metric-plot': { 'es': 'SUPERFICIE PARCELA', 'en': 'PLOT AREA' },
+            'metric-build': { 'es': 'CONSTRUCCIÓN', 'en': 'BUILD AREA' },
+            'metric-levels': { 'es': 'NIVELES', 'en': 'LEVELS' },
+            'concept-description': {
+                'es': 'La Porcada Island propone un desarrollo residencial de bajo impacto ambiental compuesto por 50 villas exclusivas situadas en primera línea de playa. Cada villa se levanta sobre una parcela de 1.000 m² con una construcción de 500 m² distribuidos en dos plantas, diseñadas para camuflarse con el entorno mediante cubiertas ajardinadas y placas solares integradas. Una piscina infinita limita cada parcela y conduce visualmente al inicio de la playa, difuminando el límite entre arquitectura y naturaleza.',
+                'en': 'La Porcada Island proposes a low environmental impact residential development composed of 50 exclusive villas located on the beachfront. Each villa rises on a 1,000 m² plot with 500 m² of construction over two levels, designed to blend with the surroundings through green roofs and integrated solar panels. An infinity pool borders each plot and visually leads to the start of the beach, blurring the boundary between architecture and nature.'
+            },
+            'materials-section-title': { 'es': 'Materiales de Construcción', 'en': 'Construction Materials' },
+            'material-clt-tag': { 'es': 'CLT', 'en': 'CLT' },
+            'material-clt-desc': {
+                'es': 'Madera contralaminada de alta ingeniería para la estructura principal. Sostenible, ligera y de rápida ejecución, permite un montaje limpio sobre el ecosistema costero sin comprometer la resistencia estructural.',
+                'en': 'High-engineering cross-laminated timber for the main structure. Sustainable, lightweight and fast to assemble, it allows clean installation on the coastal ecosystem without compromising structural strength.'
+            },
+            'material-steel-tag': { 'es': 'ACERO GALVANIZADO', 'en': 'GALVANIZED STEEL' },
+            'material-steel-desc': {
+                'es': 'Estructura secundaria y elementos de unión en acero galvanizado, con protección naval frente a la corrosión salina. Garantiza durabilidad y estabilidad frente a la intemperie marina.',
+                'en': 'Secondary structure and joint elements in galvanized steel, with naval protection against salt corrosion. Ensures durability and stability against marine weather.'
+            },
+            'material-epoxy-tag': { 'es': 'EPOXY', 'en': 'EPOXY' },
+            'material-epoxy-desc': {
+                'es': 'Revestimientos continuos de resina epoxy artística en plantas y zonas húmedas. Superficie impermeable, higiénica y personalizable, con acabados que evocan la orilla del mar.',
+                'en': 'Continuous artistic epoxy resin coatings on floors and wet areas. Waterproof, hygienic and customizable surface, with finishes that evoke the seashore.'
+            },
+            'architecture-label': { 'es': 'Diseño Firmado por', 'en': 'Design Signed by' },
+            'architecture-desc': {
+                'es': 'Concepto integral del resort y autoría del diseño arquitectónico',
+                'en': 'Integral resort concept and authorship of the architectural design'
+            },
+            'product-hero-title': { 'es': 'II. Modelo de Villa', 'en': 'II. Villa Model' },
+            'image-unavailable': { 'es': 'Imagen no disponible', 'en': 'Image not available' },
+            'image-unavailable-details': { 'es': "Verifique que el archivo 'foto100.png' esté en la carpeta 'images'", 'en': "Make sure the file 'foto100.png' is in the 'images' folder" },
+            'image-unavailable-villa': { 'es': 'Imagen no disponible', 'en': 'Image not available' },
+            'image-unavailable-villa-details': { 'es': "Verifique que el archivo 'villa0.png' esté en la carpeta 'images'", 'en': "Make sure the file 'villa0.png' is in the 'images' folder" },
+            'spec-tag-structure': { 'es': 'ESTRUCTURA', 'en': 'STRUCTURE' },
+            'spec-structure-strong': { 'es': 'Sistema CLT + Acero Galvanizado:', 'en': 'CLT + Galvanized Steel System:' },
+            'spec-structure-desc': {
+                'es': 'Estructura portante en madera contralaminada con refuerzos y uniones de acero galvanizado. Montaje limpio y rápido sobre el ecosistema costero.',
+                'en': 'Load-bearing structure in cross-laminated timber with reinforcements and galvanized steel joints. Clean and fast assembly on the coastal ecosystem.'
+            },
+            'spec-tag-cladding': { 'es': 'REVESTIMIENTOS', 'en': 'CLADDING' },
+            'spec-cladding-strong': { 'es': 'Epoxy Artístico:', 'en': 'Artistic Epoxy:' },
+            'spec-cladding-desc': {
+                'es': 'Suelos continuos de resina epoxy con efecto "Orilla de Mar" en planta baja y acabados técnicos premium en planta superior.',
+                'en': 'Continuous epoxy resin floors with "Shoreline" effect on the ground floor and premium technical finishes on the upper floor.'
+            },
+            'model-details-title': { 'es': 'Detalles del Modelo', 'en': 'Model Details' },
+            'spec-surface-label': { 'es': 'Superficie:', 'en': 'Surface:' },
+            'spec-surface-value': {
+                'es': '500 m² construidos sobre parcela de 1.000 m², en dos niveles.',
+                'en': '500 m² built on a 1,000 m² plot, on two levels.'
+            },
+            'spec-architecture-label': { 'es': 'Arquitectura:', 'en': 'Architecture:' },
+            'spec-architecture-value': {
+                'es': 'Techos planos "vivos" con jardines en cubierta y placas solares integradas, diseñados para camuflar la vivienda en el entorno natural.',
+                'en': '"Living" flat roofs with roof gardens and integrated solar panels, designed to camouflage the house in its natural surroundings.'
+            },
+            'spec-pool-label': { 'es': 'Piscina:', 'en': 'Pool:' },
+            'spec-pool-value': {
+                'es': 'Piscina infinita que limita la parcela y conduce visualmente al inicio de la playa, fundiendo arquitectura y costa.',
+                'en': 'Infinity pool that borders the plot and visually leads to the start of the beach, blending architecture and coastline.'
+            },
+            'spec-layout-label': { 'es': 'Distribución:', 'en': 'Layout:' },
+            'spec-layout-groundfloor': {
+                'es': 'Planta Baja: Áreas sociales abiertas, cocina de diseño, acceso directo a la piscina infinita y a la playa.',
+                'en': 'Ground Floor: Open social areas, designer kitchen, direct access to the infinity pool and the beach.'
+            },
+            'spec-layout-upperfloor': {
+                'es': 'Planta Alta: Master Suite con vistas 270°, vestidor y baño de piedra natural, diseño Denniston.',
+                'en': 'Upper Floor: Master Suite with 270° views, dressing room and natural stone bathroom, Denniston design.'
+            },
+            'spec-materials-label': { 'es': 'Materiales:', 'en': 'Materials:' },
+            'spec-materials-value': {
+                'es': 'CLT (estructura), acero galvanizado (refuerzos), epoxy (revestimientos).',
+                'en': 'CLT (structure), galvanized steel (reinforcements), epoxy (coatings).'
+            },
+            'spec-design-label': { 'es': 'Diseño:', 'en': 'Design:' },
+            'spec-design-value': {
+                'es': 'Taller de Arquitectura Denniston.',
+                'en': 'Denniston Architecture Studio.'
+            },
+            'market-valuation-label': { 'es': 'Precio de Venta', 'en': 'Sale Price' },
+            'price-note': {
+                'es': 'Valor orientativo por unidad · Datos disponibles bajo solicitud cualificada',
+                'en': 'Indicative value per unit · Details available upon qualified request'
+            },
+            'nav-see-villa': { 'es': 'Ver Modelo de Villa →', 'en': 'See Villa Model →' },
+            'nav-see-vision': { 'es': '← Ver Visión del Proyecto', 'en': '← See Project Vision' }
+        };
+
+        function toggleLanguage() {
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            document.getElementById('lang-toggle').innerText = newLang === 'en' ? 'ES' : 'EN';
+            document.documentElement.lang = newLang;
+
+            const elementsToTranslate = document.querySelectorAll('[data-translate]');
+            elementsToTranslate.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[key] && translations[key][newLang]) {
+                    element.innerText = translations[key][newLang];
+                }
+            });
+
+            currentLang = newLang;
+            updateNavBtnText();
+        }
+
+        function updateNavBtnText() {
+            const navBtn = document.querySelector('.nav-btn');
+            if (!navBtn) return;
+            if (slide === 1) {
+                navBtn.innerText = translations['nav-see-villa'][currentLang];
+            } else {
+                navBtn.innerText = translations['nav-see-vision'][currentLang];
+            }
+        }
+
+        // =================================================================
+        // CAMBIO ENTRE MODOS DE PRESENTACIÓN
+        // =================================================================
+        function switchMode(mode) {
+            const storyMode = document.getElementById('story-mode');
+            const businessMode = document.getElementById('business-mode');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+
+            modeBtns.forEach(btn => {
+                if(btn.id !== 'lang-toggle') btn.classList.remove('active');
+            });
+
+            if (mode === 'story') {
+                storyMode.classList.add('active');
+                businessMode.classList.remove('active');
+                modeBtns[0].classList.add('active');
+                if (typeof restartStory === 'function') {
+                    restartStory();
+                }
+            } else {
+                storyMode.classList.remove('active');
+                businessMode.classList.add('active');
+                modeBtns[1].classList.add('active');
+            }
+        }
+
+        // =================================================================
+        // CAMBIO ENTRE SLIDES DEL MODO EJECUTIVO
+        // =================================================================
+        let slide = 1;
+        function toggleSlide() {
+            const f = document.getElementById('slide-finance');
+            const p = document.getElementById('slide-product');
+            if(slide === 1) {
+                f.classList.remove('active'); p.classList.add('active');
+                slide = 2;
+            } else {
+                p.classList.remove('active'); f.classList.add('active');
+                slide = 1;
+            }
+            updateNavBtnText();
+            window.scrollTo(0,0);
+        }
+
+        // =================================================================
+        // MODO DE HISTORIA VISUAL
+        // =================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavBtnText();
+
+            const carouselImages = [
+                'images/foto2.png',
+                'images/foto6.png',
+                'images/foto7.png',
+                'images/foto8.png',
+                'images/foto100.png'
+            ];
+
+            const postVideoImages = [
+                'images/mem1.png',
+                'images/mem1.png',
+                'images/villa1.png',
+                'images/villa2.png',
+                'images/villa3.png',
+                'images/villa4.png'
+            ];
+
+            const backgroundSlide = document.getElementById('background-slide');
+            const carouselSlide = document.getElementById('carousel-slide');
+            const carouselImage = document.getElementById('carousel-image');
+            const videoSlide = document.getElementById('video-slide');
+            const video = document.getElementById('story-video');
+            const postVideoSlide = document.getElementById('post-video-slide');
+            const postVideoImage = document.getElementById('post-video-image');
+            const logosSlide = document.getElementById('logos-slide');
+            const progressBar = document.getElementById('progress-bar');
+            const loading = document.getElementById('loading');
+
+            function hideAllSlides() {
+                backgroundSlide.classList.remove('active');
+                carouselSlide.classList.remove('active');
+                videoSlide.classList.remove('active');
+                postVideoSlide.classList.remove('active');
+                logosSlide.classList.remove('active');
+            }
+
+            function showSlide(slideElement) {
+                hideAllSlides();
+                slideElement.classList.add('active');
+            }
+
+            function updateProgress(current, total) {
+                const percentage = (current / total) * 100;
+                progressBar.style.width = percentage + '%';
+            }
+
+            let storyTimeout;
+
+            function startStory() {
+                if (storyTimeout) {
+                    clearTimeout(storyTimeout);
+                }
+                loading.style.display = 'none';
+
+                const totalSteps = 1 + carouselImages.length + 1 + postVideoImages.length + 1;
+                let currentStep = 0;
+
+                storyTimeout = setTimeout(() => {
+                    currentStep++;
+                    updateProgress(currentStep, totalSteps);
+                    showSlide(carouselSlide);
+                    let carouselIndex = 0;
+
+                    function showNextCarouselImage() {
+                        if (carouselIndex < carouselImages.length) {
+                            carouselImage.src = carouselImages[carouselIndex];
+                            carouselIndex++;
+                            currentStep++;
+                            updateProgress(currentStep, totalSteps);
+                            storyTimeout = setTimeout(showNextCarouselImage, 500);
+                        } else {
+                            showSlide(videoSlide);
+                            video.play();
+                            currentStep++;
+                            updateProgress(currentStep, totalSteps);
+
+                            video.onended = () => {
+                                showSlide(postVideoSlide);
+                                let postVideoIndex = 0;
+
+                                function showNextPostVideoImage() {
+                                    if (postVideoIndex < postVideoImages.length) {
+                                        postVideoImage.src = postVideoImages[postVideoIndex];
+                                        postVideoIndex++;
+                                        currentStep++;
+                                        updateProgress(currentStep, totalSteps);
+                                        storyTimeout = setTimeout(showNextPostVideoImage, 1500);
+                                    } else {
+                                        showSlide(logosSlide);
+                                        currentStep++;
+                                        updateProgress(currentStep, totalSteps);
+                                        storyTimeout = setTimeout(() => {
+                                            progressBar.style.width = '0%';
+                                            startStory();
+                                        }, 5000);
+                                    }
+                                }
+                                showNextPostVideoImage();
+                            };
+                        }
+                    }
+                    showNextCarouselImage();
+                }, 3000);
+            }
+
+            window.restartStory = function() {
+                progressBar.style.width = '0%';
+                hideAllSlides();
+                showSlide(backgroundSlide);
+                startStory();
+            }
+
+            startStory();
+        });
+    </script>
+</body>
+</html>
